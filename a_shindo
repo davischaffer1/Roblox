@@ -1,0 +1,343 @@
+spawn(function()
+    repeat wait() until shared.Settings["Autofarm"].Enabled
+
+    shared.Current = {}
+    local RunService         =  game:GetService("RunService")
+    local orange_color       = "http://www.roblox.com/asset/?id=5459241799"
+    local green_color        = "http://www.roblox.com/asset/?id=5459241648"
+    local blue_color         = "http://www.roblox.com/asset/?id=5459241986"
+    local red_color          = "http://www.roblox.com/asset/?id=5459242154"
+    local candy_color        = "http://www.roblox.com/asset/?id=5710748193"
+
+    local SERVER_ID = {
+        ["[RPG] Haze"] = { -- Mist
+            "4601350760",
+            "4616652839"
+        },
+        ["[RPG] Dunes"] = { -- Sand
+            "4601350394",
+            "4616652839"
+        },
+        ["[RPG] Ember"] = { -- Leaf
+            "4601350214",
+            "4616652839"
+        },
+        ["[RPG] Storm"] = { -- Rain
+            "5084678830",
+            "4616652839"
+        },
+        ["[RPG] Obelisk "] = { -- Stone
+            "4601350809",
+            "4616652839"
+        },
+        ["[RPG] Nimbus"] = { -- Cloud
+            "4601350656",
+            "4616652839"
+        },
+        ["[RPG] Training"] = { -- Training Grounds
+            "5431071837",
+            "4616652839"
+        },
+        ["[RPG] Forest of Embers"] = { -- Forest
+            "5447073001",
+            "4616652839"
+        },
+        ["[RPG] Dawn Hideout"] = { -- Akatsuki
+            "5431069982",
+            "4616652839"
+        }
+    }
+
+    if game.PlaceId == 4616652839 then
+        game.Players.LocalPlayer.startevent:FireServer("teleporttoprivate", shared.Settings.Codes["Autofarm PS"][1], mapselected)
+    end
+
+    if shared.Settings["Autofarm"].Type2 == "Hop" then
+
+        spawn(function()
+            coroutine.wrap(function()
+                wait(60)
+                if shared.Settings["Autofarm"].Type == "Private" then
+                    game.Players.LocalPlayer.startevent:FireServer("teleporttoprivate", shared.Settings.Codes["Autofarm PS"][1], mapselected)
+                else
+                    game:GetService("TeleportService"):Teleport(tonumber(SERVER_ID["[RPG] Haze"][1]), game.Players.LocalPlayer)
+                end
+            end)()
+        end)
+
+        spawn(function()
+            for _,s in pairs(game:GetService("Workspace").missiongivers:GetChildren()) do
+                if s:IsA("Model") then
+                    if s.Head.givemission.Enabled and s.Head.givemission.color.Image == green_color and s.Head.givemission.color.Image == candy_color then
+                        table.insert(shared.Current,s.Name)
+                    end
+                end
+            end
+        end)
+
+        wait(2)
+
+        spawn(function()
+            while wait(9) do
+                if not shared.Settings["Autofarm"].Enabled then return end
+                table.remove(shared.Current,1)
+                print(#shared.Current)
+                if #shared.Current == 0 then
+                    local priv = game.Players.LocalPlayer.PlayerGui.Main.private
+                    if shared.Settings["Autofarm"].Type == "Private" then
+                        if priv.Text == shared.Settings.Codes["Autofarm PS"][1] or priv.Text ~= shared.Settings.Codes["Autofarm PS"][1] and priv.Text ~= shared.Settings.Codes["Autofarm PS"][2] then
+                            game.Players.LocalPlayer.startevent:FireServer("teleporttoprivate", shared.Settings.Codes["Autofarm PS"][2], mapselected)
+                        elseif game.Players.LocalPlayer.PlayerGui.Main.private.Text == shared.Settings.Codes["Autofarm PS"][2] then
+                            game.Players.LocalPlayer.startevent:FireServer("teleporttoprivate", shared.Settings.Codes["Autofarm PS"][1], mapselected)
+                        end
+                    else
+                        if game.PlaceId == tonumber(SERVER_ID["[RPG] Ember"][1]) or game.PlaceId ~= tonumber(SERVER_ID["[RPG] Ember"][1]) and game.PlaceId ~= tonumber(SERVER_ID["[RPG] Haze"][1]) then
+                            game:GetService("TeleportService"):Teleport(tonumber(SERVER_ID["[RPG] Haze"][1]), game.Players.LocalPlayer)
+                        elseif game.PlaceId == tonumber(SERVER_ID["[RPG] Haze"][1]) then
+                            game:GetService("TeleportService"):Teleport(tonumber(SERVER_ID["[RPG] Ember"][1]), game.Players.LocalPlayer)
+                        end
+                    end
+                end
+            end
+        end)
+
+        spawn(function()
+            RunService.Stepped:Connect(function()
+                if shared.Settings["Autofarm"].Enabled then
+                    game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                end
+                if shared.Settings["Autofarm"].Enabled and shared.Settings["Autofarm"].CanPrestige then
+                    local string_1 = "rankup";
+                    local Target = game:GetService("Players").LocalPlayer.startevent;
+                    Target:FireServer(string_1);
+                end
+            end)
+        end)
+
+        spawn(function()
+            while shared.Settings["Autofarm"].Enabled do
+                if pcall(function() return game:GetService("Workspace").missiontypes.currentmissions.mission end) then
+                    if game:GetService("Workspace").missiontypes.currentmissions.mission.objective.Value == "Mission" then
+                        if shared.Settings["Autofarm"].Type == "Private" then
+                            coroutine.wrap(function()
+                                wait(8)
+                                for _,t in pairs(game:GetService("Workspace").npc:GetChildren()) do
+                                    if pcall(function() return t.HumanoidRootPart end) then
+                                        game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = game:GetService("Workspace").missiontypes.currentmissions.mission.point.Value}):Play()
+                                    end
+                                end
+                            end)()
+                            print("nothing")
+                        else
+                            game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = game:GetService("Workspace").missiontypes.currentmissions.mission.point.Value * CFrame.new(0,-10,0)}):Play()
+                        end
+                    end
+                end
+                for _,t in pairs(game:GetService("Workspace").npc:GetChildren()) do
+                    pcall(function()
+                        coroutine.wrap(function()
+                            if t:FindFirstChild("Humanoid") and t.Humanoid.Health ~= 0  then
+                                wait(.25)
+                                t.Humanoid.Health = 0
+                            end
+                        end)()
+                    end)
+                end
+                RunService.RenderStepped:wait()
+            end
+        end)
+
+        spawn(function()
+            if shared.Settings["Autofarm"].Enabled and shared.Settings["Autofarm"].Notifier then
+                local realtime_got = os.date("%m/%d/%Y %I:%M %p")
+                wait(.5)
+                local msg = "```" .. realtime_got .. "```"
+                log("Shindo Notifier", msg, shared.Settings["Discord Webhook URL"])
+                wait(.5)
+                local kg1 = "[ KG 1: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg1.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG1.elelogo.level.num.Text) .. "]"
+                local kg2 = "[ KG 2: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg2.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG2.elelogo.level.num.Text) .. "]"
+                local kg3 = "[ KG 3: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg3.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG3.elelogo.level.num.Text) .. "]"
+                local kg4 = "[ KG 4: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg4.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG4.elelogo.level.num.Text) .. "]"
+                local e1 = "[ Element 1: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element1.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element1.elelogo.level.num.Text) .. "]"
+                local e2 = "[ Element 2: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element2.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element2.elelogo.level.num.Text) .. "]"
+                local e3 = "[ Element 3: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element3.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element3.elelogo.level.num.Text) .. "]"
+                local e4 = "[ Element 4: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element4.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element4.elelogo.level.num.Text) .. "]"
+                local options_enabled = "```" .. "Level: " .. tostring(game:GetService("Players").LocalPlayer.statz.lvl.lvl.Value) .. " Rank: " .. tostring(game:GetService("Players").LocalPlayer.statz.prestige.rank.Value) .. tostring(game:GetService("Players").LocalPlayer.statz.prestige.number.Value) .. " Ryo: " .. tostring(game:GetService("Players").LocalPlayer.statz.cash.Value) .. " Spins: " .. tostring(game:GetService("Players").LocalPlayer.statz.spins.Value) .. " Kg: " .. kg1 .. kg2 .. kg3 .. kg4 .. " Element: " .. e1 .. e2 .. e3 .. e4 .. "```"
+                log("Shindo Notifier", options_enabled, shared.Settings["Discord Webhook URL"])
+            end
+        end)
+
+        spawn(function()
+            while shared.Settings["Autofarm"].Enabled do 
+                if shared.Settings["Autofarm"].CanGetScroll then
+                    spawn(function()
+                        for _,v in pairs(game:GetService("Workspace"):GetChildren()) do
+                            if v:IsA("Model") then
+                                if not v:FindFirstChild("HumanoidRootPart") then
+                                    for _,s in pairs(v:GetDescendants()) do
+                                        if s:IsA("RemoteEvent") then
+                                            local scroll_name = v.Name
+                                            game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = s.Parent.CFrame}):Play()
+                                            wait(1)
+                                            s:FireServer()
+                                            local realtime_got = os.date("%m/%d/%Y %I:%M %p")
+                                            local section = "**Scroll Sniper** :scroll: "
+                                            log("Shindo Gui - Notifier", section, shared.Settings.Webhook)
+                                            local msg = "```" .. realtime_got .. " - " .. scroll_name "```"
+                                            log("Shindo Gui - Notifier", msg, shared.Settings.Webhook)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+                RunService.RenderStepped:wait()
+            end
+        end)
+    
+        while shared.Settings["Autofarm"].Enabled do
+		    for _,q in pairs(game:GetService("Workspace").missiongivers:GetChildren()) do
+                if q:IsA("Model") then
+                    if q.Head.givemission.color.Image == green_color then
+                        if q.Head.givemission.Enabled then
+                            while not game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Missionstory.Visible do
+                                game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = q.HumanoidRootPart.CFrame}):Play()
+                                q.CLIENTTALK:FireServer()
+                                local ohString1 = "accept"
+                                q.CLIENTTALK:FireServer(ohString1)
+                                RunService.RenderStepped:wait()
+                            end
+                        end
+                    end
+                end
+            end
+            RunService.RenderStepped:wait()
+        end
+
+    else
+
+        spawn(function()
+            while shared.Settings["Autofarm"].Enabled do 
+                if shared.Settings["Autofarm"].CanGetScroll then
+                    spawn(function()
+                        for _,v in pairs(game:GetService("Workspace"):GetChildren()) do
+                            if v:IsA("Model") then
+                                if not v:FindFirstChild("HumanoidRootPart") then
+                                    for _,s in pairs(v:GetDescendants()) do
+                                        if s:IsA("RemoteEvent") then
+                                            local scroll_name = v.Name
+                                            game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = s.Parent.CFrame * CFrame.new(0,3,0)}):Play()
+                                            wait(1)
+                                            s:FireServer()
+                                            local realtime_got = os.date("%m/%d/%Y %I:%M %p")
+                                            local section = "**Scroll Sniper** :scroll: "
+                                            log("Shindo Gui - Notifier", section, shared.Settings.Webhook)
+                                            local msg = "```" .. realtime_got .. " - " .. scroll_name "```"
+                                            log("Shindo Gui - Notifier", msg, shared.Settings.Webhook)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end)
+                end
+                RunService.RenderStepped:wait()
+            end
+        end)
+
+        spawn(function()
+            for _,v in pairs(game:GetService("Workspace").missiontypes.currentmissions:GetChildren()) do
+                v:Destroy()
+            end
+        end)
+
+        spawn(function()
+            RunService.Stepped:Connect(function()
+                if shared.Settings["Autofarm"].Enabled then
+                    game.Players.LocalPlayer.Character.Humanoid:ChangeState(11)
+                end
+                if shared.Settings["Autofarm"].Enabled and shared.Settings["Autofarm"].CanPrestige then
+                    local string_1 = "rankup";
+                    local Target = game:GetService("Players").LocalPlayer.startevent;
+                    Target:FireServer(string_1);
+                end
+            end)
+        end)
+    
+        spawn(function()
+            while shared.Settings["Autofarm"].Enabled do
+                if pcall(function() return game:GetService("Workspace").missiontypes.currentmissions.mission end) then
+                    if game:GetService("Workspace").missiontypes.currentmissions.mission.objective.Value == "Mission" then
+                        if shared.Settings["Autofarm"].Type == "Private" then
+                            game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = game:GetService("Workspace").missiontypes.currentmissions.mission.point.Value}):Play()
+                        else
+                            game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = game:GetService("Workspace").missiontypes.currentmissions.mission.point.Value * CFrame.new(0,-15,0)}):Play()
+                        end
+                    end
+                end
+                for _,t in pairs(game:GetService("Workspace").npc:GetChildren()) do
+                    pcall(function()
+                        coroutine.wrap(function()
+                            if t:FindFirstChild("Humanoid") and t.Humanoid.Health ~= 0  then
+                                wait(.25)
+                                t.Humanoid.Health = 0
+                            end
+                        end)()
+                    end)
+                end
+                RunService.RenderStepped:wait()
+            end
+        end)
+
+        spawn(function()
+            while wait(60) do
+                if shared.Settings["Autofarm"].Enabled and shared.Settings["Autofarm"].AutoCancelMissions then 
+                    local chatbox = game.Players.LocalPlayer.PlayerGui.Chat.Frame.ChatBarParentFrame.Frame.BoxFrame.Frame.ChatBar
+                    chatbox.Text = "!cancel"
+                    for i,v in pairs(getconnections(chatbox.FocusLost)) do
+                        v.Function(true)
+                    end
+                end
+                if shared.Settings["Autofarm"].Enabled and shared.Settings["Autofarm"].Notifier then
+                    local realtime_got = os.date("%m/%d/%Y %I:%M %p")
+                    wait(.5)
+                    local msg = "```" .. realtime_got .. "```"
+                    log("Shindo Notifier", msg, shared.Settings["Discord Webhook URL"])
+                    wait(.5)
+                    local kg1 = "[ KG 1: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg1.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG1.elelogo.level.num.Text) .. "]"
+                    local kg2 = "[ KG 2: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg2.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG2.elelogo.level.num.Text) .. "]"
+                    local kg3 = "[ KG 3: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg3.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG3.elelogo.level.num.Text) .. "]"
+                    local kg4 = "[ KG 4: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.kg4.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.KekkeiGenkaiTab.KG4.elelogo.level.num.Text) .. "]"
+                    local e1 = "[ Element 1: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element1.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element1.elelogo.level.num.Text) .. "]"
+                    local e2 = "[ Element 2: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element2.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element2.elelogo.level.num.Text) .. "]"
+                    local e3 = "[ Element 3: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element3.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element3.elelogo.level.num.Text) .. "]"
+                    local e4 = "[ Element 4: " .. tostring(game:GetService("Players").LocalPlayer.statz.main.element4.Value) .. " - ".. tostring(game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Menu.NinjutsuTab.Element4.elelogo.level.num.Text) .. "]"
+                    local options_enabled = "```" .. "Level: " .. tostring(game:GetService("Players").LocalPlayer.statz.lvl.lvl.Value) .. " Rank: " .. tostring(game:GetService("Players").LocalPlayer.statz.prestige.rank.Value) .. tostring(game:GetService("Players").LocalPlayer.statz.prestige.number.Value) .. " Ryo: " .. tostring(game:GetService("Players").LocalPlayer.statz.cash.Value) .. " Spins: " .. tostring(game:GetService("Players").LocalPlayer.statz.spins.Value) .. " Kg: " .. kg1 .. kg2 .. kg3 .. kg4 .. " Element: " .. e1 .. e2 .. e3 .. e4 .. "```"
+                    log("Shindo Notifier", options_enabled, shared.Settings["Discord Webhook URL"])
+                end
+            end
+        end)
+    
+        while shared.Settings["Autofarm"].Enabled do
+                for _,q in pairs(game:GetService("Workspace").missiongivers:GetChildren()) do
+                    if q:IsA("Model") then
+                        if q.Head.givemission.color.Image == green_color then
+                            if q.Head.givemission.Enabled then
+                                while not game:GetService("Players").LocalPlayer.PlayerGui.Main.ingame.Missionstory.Visible do
+                                    game:GetService("TweenService"):Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(.25), {CFrame = q.HumanoidRootPart.CFrame}):Play()
+                                    q.CLIENTTALK:FireServer()
+                                    local ohString1 = "accept"
+                                    q.CLIENTTALK:FireServer(ohString1)
+                                    RunService.RenderStepped:wait()
+                                end
+                            end
+                        end
+                    end
+                end
+            RunService.RenderStepped:wait()
+        end
+
+    end
+    
+end)
